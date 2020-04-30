@@ -1,7 +1,7 @@
 <template>
 	<View class="Hot SongList">
 		<View class="coverBox">
-			<View class="cover" />
+			<View class="cover"></View>
 			<Text class="time">更新日期
 				{{ $GetDateTime(new Date(this.time), "m月d日") }}</Text>
 		</View>
@@ -49,22 +49,22 @@
 			};
 		},
 		created() {
-			getHot({
-				idx: 1
-			}).then(res => {
-				for (let item of res.playlist.tracks) {
-					this.hotList.push({
-						al: {
-							picUrl: item.al.picUrl,
-							name: item.al.name
-						},
-						ar: item.ar,
-						name: item.name,
-						id: item.id
-					});
-				}
-				this.time = res.playlist.updateTime;
-			}).catch(e => {});
+			// getHot({
+			// 	idx: 1
+			// }).then(res => {
+			// 	for (let item of res.playlist.tracks) {
+			// 		this.hotList.push({
+			// 			al: {
+			// 				picUrl: item.al.picUrl,
+			// 				name: item.al.name
+			// 			},
+			// 			ar: item.ar,
+			// 			name: item.name,
+			// 			id: item.id
+			// 		});
+			// 	}
+			// 	this.time = res.playlist.updateTime;
+			// }).catch(e => {});
 		},
 		methods: {
 			updateStore() {

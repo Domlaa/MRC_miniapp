@@ -12,15 +12,36 @@
 		</View>
 
 		<View class="tagBox" v-if="!SongList.length">
-			<View class="hot">热门搜索</View>
-			<View>
-				<van-tag :round="true" color="#f7f7f7" text-color="#666" custom-class="tag" v-for="(item, index) in hotList" :key="index"
-				 circle @click.native="hotSearch(item)">
-					{{ item }}
-				</van-tag>
+			<View class="hot">热歌榜({{ $GetDateTime(new Date(this.time), "m月d日") }})</View>
+			<View class="item" :key="index" v-for="(item, index) in hotList" @click="go(item)">
+				<View class="left">{{ index + 1 }}</View>
+				<View class="box">
+					<View class="middle">
+						<View class="ellipsis">{{ item.song_name }}</View>
+						<Text class="ellipsis">1111
+							<!-- {{
+			                    item.ar
+			                        .map(i => {
+			                            return i.name;
+			                        })
+			                        .join(" / ") +
+			                        " - " +
+			                        item.al.name
+			                }} -->
+						</Text>
+					</View>
+					<View class="right" @click.stop="play(item)">
+						<Image :src="
+			                    !audio_paused && item.id == audio_id
+			                        ? require('../../static/pause-item.png')
+			                        : require('../../static/play-list.png')
+			                " />
+					</View>
+				</View>
 			</View>
 		</View>
 
+		<!-- 搜索结果滚动列表 -->
 		<scroll-view class="scrollview" scrollY scrollWithAnimation scrollTop="0" lowerThreshold="20" @scrolltolower="scroll">
 			<View class="item" v-for="(item, index) in SongList" :key="index" @click="go(item)">
 				<View class="left">{{ index + 1 }}</View>
@@ -47,7 +68,7 @@
 
 <script>
 	import {
-		searchHot,
+		getHot,
 		search
 	} from "../../api/index";
 	import VanTag from "../../wxcomponents/vant-weapp/tag/index";
@@ -60,21 +81,38 @@
 		},
 		data() {
 			return {
-				search: "",
+				search: "Zedd",
 				rows: 50, //每页数量
 				page: 1, //当前页
 				total: 0, //总数
-				SongList: null,
-				hotList: [],
+				SongList: [],
+				hotList: [], //热歌榜
+				time: new Date().getTime(),
+				audio_paused: null,
+				audio_id: null,
 				show_close: false //是否显示搜索框的叉叉
 			};
 		},
 		created() {
-			searchHot().then(res => {
-				for (let item of res.result.hots) {
-					this.hotList.push(item.first);
+			getHot({
+				limit: 10 //加载热门歌曲数
+			}).then(res => {
+				console.log("热榜res：", res)
+				for (let key in res) {
+					if (key == 'code') continue
+					let item = res[key]
+					this.hotList.push({
+						al: {
+							picUrl: item.album_picture,
+							name: item.album_name
+						},
+						ar: item.artist_name,
+						name: item.song_name,
+						id: item.song_id
+					});
 				}
-			});
+				this.time = res.playlist.updateTime;
+			}).catch(e => {});
 		},
 		mounted() {
 			console.log('搜索tab加载时输出：', this);
@@ -104,77 +142,34 @@
 				}).then(res => {
 					let arr = [];
 					console.log('搜索返回结果：', res)
-					// if (!res.result.songs) {
-					// 	uni.hideLoading();
-					// 	uni.showToast({
-					// 		title: "没有找到歌曲",
-					// 		icon: "none",
-					// 		duration: 1000
-					// 	});
-					// 	return;
-					// }
-					// for (let item of res.result.songs) {
-					// 	arr.push({
-					// 		al: {
-					// 			picUrl: item.al.picUrl,
-					// 			name: item.al.name
-					// 		},
-					// 		ar: item.ar,
-					// 		name: item.name,
-					// 		id: item.id
-					// 	});
-					// }
-					// this.total = res.result.songCount;
-					// this.page = 2;
-					// this.SongList = arr;
-
-					// uni.hideLoading();
-				});
-			},
-			/**
-			 * 热门搜索
-			 * @method hotSearch
-			 * @return {undefined}
-			 */
-			hotSearch(text) {
-				uni.showLoading({
-					title: "loading"
-				});
-				search({
-					keywords: text,
-					limit: this.rows,
-					offset: 1
-				}).then(
-					res => {
-						if (!res.result.songs) {
-							uni.hideLoading();
-							uni.showToast({
-								title: "没有找到歌曲",
-								icon: "none",
-								duration: 1000
-							});
-							return;
-						}
-						let arr = [...this.SongList];
-						for (let item of res.result.songs) {
-							arr.push({
-								al: {
-									picUrl: item.al.picUrl,
-									name: item.al.name
-								},
-								ar: item.ar,
-								name: item.name,
-								id: item.id
-							});
-						}
-						this.total = res.result.songCount;
-						this.page = 2;
-						this.SongList = arr;
-						this.search = text;
+					if (!res.result.songs) {
 						uni.hideLoading();
+						uni.showToast({
+							title: "没有找到歌曲",
+							icon: "none",
+							duration: 1000
+						});
+						return;
 					}
-				);
+					for (let item of res.result.songs) {
+						arr.push({
+							al: {
+								picUrl: item.al.picUrl,
+								name: item.al.name
+							},
+							ar: item.ar,
+							name: item.name,
+							id: item.id
+						});
+					}
+					this.total = res.result.songCount;
+					this.page = 2;
+					this.SongList = arr;
+
+					uni.hideLoading();
+				});
 			},
+
 			/**
 			 * 跳转到歌曲详情页
 			 * @method go
@@ -183,6 +178,7 @@
 			 */
 			go(item) {
 				//如歌没有播放歌曲 或者 播放的不是当前歌曲,则播放当前歌曲
+				console.log('搜索结果点击后item值为：', item)
 				if (
 					!this.$store.state.song ||
 					this.$store.state.song.id !== item.id
@@ -388,6 +384,124 @@
 				height: 100%;
 				padding: 0 25px 0 25px;
 				font-size: 14px;
+			}
+		}
+	}
+
+	.coverBox {
+		position: relative;
+		background: url(//s3.music.126.net/mobile-new/img/hot_music_bg_2x.jpg?f01a252…=) no-repeat;
+		background-size: cover;
+		height: 146px;
+		display: flex;
+		justify-content: center;
+		flex-direction: column;
+		padding-left: 15px;
+
+		.cover {
+			background: url(//s3.music.126.net/mobile-new/img/index_icon_2x.png?5207a28…=) no-repeat;
+			background-size: 166px 97px;
+			width: 142px;
+			height: 67px;
+			background-position: -24px -30px;
+		}
+
+		.time {
+			color: hsla(0, 0%, 100%, 0.8);
+			font-size: 12px;
+			transform: scale(0.91);
+			transform-origin: left top;
+			margin-top: 10px;
+		}
+	}
+
+	.SongList {
+		.header {
+			display: flex;
+			border-radius: 13px 13px 0 0;
+			height: 45px;
+			line-height: 45px;
+			background-color: #fff;
+			align-items: center;
+			font-size: 30rpx;
+			border-bottom: 1px solid #eee;
+			overflow: hidden;
+
+			image {
+				width: 20px;
+				height: 20px;
+				margin-right: 15px;
+				margin-left: 15px;
+			}
+
+			.left {
+				margin-right: auto;
+				color: #333;
+
+				Text {
+					color: #999;
+				}
+			}
+
+			.right {
+				height: 100%;
+				padding: 0 8px;
+				background-color: red;
+				color: #fff;
+				text-align: center;
+				min-width: 110px;
+			}
+		}
+
+		.item {
+			display: flex;
+			align-items: center;
+			padding-left: 20px;
+			font-size: 30rpx;
+			color: #333;
+			height: 50px;
+
+			.left {
+				margin-right: 20px;
+				color: #888;
+			}
+
+			.box {
+				flex: 1;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				border-bottom: 1px solid #eee;
+				padding-right: 15px;
+				height: 100%;
+				overflow: hidden;
+
+				.middle {
+					display: flex;
+					flex-direction: column;
+					flex: 0 0 90%;
+					overflow: hidden;
+
+					text {
+						font-size: 24rpx;
+						color: #888;
+						margin-top: 1px;
+					}
+
+					.ellipsis {
+						overflow: hidden;
+						text-overflow: ellipsis;
+						white-space: nowrap;
+					}
+				}
+
+				.right {
+					image {
+						width: 25px;
+						height: 25px;
+						margin-top: 3px;
+					}
+				}
 			}
 		}
 	}

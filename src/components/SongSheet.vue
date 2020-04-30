@@ -1,15 +1,8 @@
 <template>
-	<View class='SongSheet item' @click="go">
+	<View class='SongSheet item' @click="go(song_item)">
 		<Image lazyLoad :src="picUrl" />
 		<Text class='name'>{{name}}</Text>
-		<View class='playCount'>
-			<Image style='position:relative;top:2rpx;width: 10Px;height:10Px;margin: 3Px 3Px 0 0;display:inline-block;' :src="require('../static/headset.png')" />
-			<!-- 这里不支持Math.floor(), 一个小坑 -->
-			<!-- {{ Math.floor(playCount) > 100000 && Math.floor(playCount / 10000) + '万' || Math.floor(playCount) }} -->
-			<!-- {{(playCount | 0) > 10000 ? (playCount / 10000 | 0) + '万' : (playCount | 0)}} -->
-			播放量
-		</View>
-		<View class='shadow'></View>
+		<Image class='playIcon' :src="require('../static/play-cell.png')" />
 	</View>
 </template>
 
@@ -18,14 +11,48 @@
 		props: {
 			picUrl: String,
 			name: String,
-			Oid: Number,
-			// playCount: Number
+			song_item: Object,
+		},
+		data() {
+			return {
+				SimilarList: [], //基于物品相似推荐playlist
+			}
 		},
 		methods: {
-			go() {
+			go(item) {
+				//如歌没有播放歌曲 或者 播放的不是当前歌曲,则播放当前歌曲
+				console.log('item值为：', item)
+				if (
+					!this.$store.state.song ||
+					this.$store.state.song.id !== item.song_id
+				) {
+					this.$store.dispatch("setGlobalData", {
+						key: "song",
+						value: item
+					});
+				}
+				//改变播放列表
+				this.insert_list(item);
 				uni.navigateTo({
-					url: `/pages/SongList/index?id=${this.Oid}`
-				})
+					url: `/pages/Song/index?id=${item.song_id}`
+				});
+			},
+			/**
+			 * 将歌曲插入到正在播放歌曲的后面
+			 * @method playAll
+			 * @return {undefined}
+			 */
+			insert_list() {
+				// 将热歌全部添加到播放列表里面
+				this.$store.dispatch("setGlobalData", {
+					key: "songList",
+					value: this.SimilarList
+				});
+				//播放模式切换为顺序播放
+				this.$store.dispatch("setGlobalData", {
+					key: "mode",
+					value: 2
+				});
 			}
 		}
 	}
@@ -50,23 +77,12 @@
 			border-radius: 10rpx;
 		}
 
-		.playCount {
+		.playIcon {
 			position: absolute;
 			right: 5%;
-			top: 2%;
-			font-size: 10Px;
-			color: #fff;
-			z-index: 1;
-		}
-
-		.shadow {
-			position: absolute;
-			left: 0;
-			top: 0;
-			width: $width;
-			height: $height;
-			border-radius: 10rpx;
-			box-shadow: 0rpx 0rpx 100rpx #000 inset;
+			top: 102px;
+			width: 20px;
+			height: 20px;
 		}
 
 		.name {

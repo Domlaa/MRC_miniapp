@@ -3,16 +3,20 @@
 		<!-- CNN 推荐展示区 -->
 		<View class="Hot SongList">
 			<View class="coverBox">
-				<View class="cover" />
-				<Text class="time">根据歌曲 {{ base_track_name }} 的推荐</Text>
+				<View class="cover"></View>
+				<Text class="time">以下推荐结果基于歌曲 {{ base_track_name }} 的推荐</Text>
 			</View>
-			<View class="item" :key="index" v-for="(item, index) in CNNRecomList" @click="go(item)">
+			<View @click="go('推荐歌单')" class="cell-title">
+				基于深度学习的推荐
+				<van-icon name="arrow" size="20px" color="#999" />
+			</View>
+			<View class="item" :key="index" v-for="(item, index) in SimilarList" @click="go(item)">
 				<View class="left">{{ index + 1 }}</View>
 				<View class="box">
 					<View class="middle">
 						<View class="ellipsis">{{ item.name }}</View>
-						<Text class="ellipsis">
-							{{
+						<Text class="ellipsis">22222
+							<!-- {{
 		                        item.ar
 		                            .map(i => {
 		                                return i.name;
@@ -20,17 +24,9 @@
 		                            .join(" / ") +
 		                            " - " +
 		                            item.name
-		                    }}
+		                    }} -->
 						</Text>
 					</View>
-					<!-- 风格标签（待定） -->
-					<!-- <View class="right" @click.stop="play(item)">
-						<Image :src="
-		                        !audio_paused && item.id == audio_id
-		                            ? require('../../static/pause-item.png')
-		                            : require('../../static/play-list.png')
-		                    " />
-					</View> -->
 					<View class="right">
 						<van-tag mark type="primary">风格名</van-tag>
 					</View>
@@ -44,7 +40,7 @@
 			<van-icon name="arrow" size="20px" color="#999" />
 		</View>
 		<View class="cell-SongSheet">
-			<SongSheet v-for="(item, index) in SimilarList" :key="index" :Oid="item.song_id" :name="item.song_name" :picUrl="item.album_pic + '?imageView&thumbnail=250x0'" />
+			<SongSheet v-for="(item, index) in SimilarList" :key="index" :song_item="item" :name="item.full_song_name" :picUrl="item.album_pic + '?imageView&thumbnail=250x0'" />
 		</View>
 
 		<!-- 基于用户的协同过滤推荐展示区 -->
@@ -53,35 +49,36 @@
 			<van-icon name="arrow" size="20px" color="#999" />
 		</View>
 		<View class="cell-SongSheet">
-			<SongSheet v-for="(item, index) in toplist" :key="index" :Oid="item.id" :name="item.name" :picUrl="item.picUrl + '?imageView&thumbnail=250x0'"
-			 :playCount="item.playCount" />
+			<SongSheet v-for="(item, index) in UserRecomList" :key="index" :song_item="item" :name="item.full_song_name" :picUrl="item.album_pic + '?imageView&thumbnail=250x0'" />
 		</View>
 	</View>
 </template>
 
 <script>
 	import {
-		getBanner,
+		getCNNRecom,
 		getSimilar,
-		toplist
+		getUserRecom
 	} from "../../api/index";
 	import VanIcon from "../../wxcomponents/vant-weapp/icon/index";
+	import VanTag from "../../wxcomponents/vant-weapp/tag/index";
 	import SongSheet from "../../components/SongSheet";
 
 	export default {
 		components: {
 			SongSheet,
-			VanIcon
+			VanIcon,
+			VanTag
 		},
 		data() {
 			return {
 				base_track_name: '测试歌曲', //根据推荐的歌曲
-				banner: [], //轮播图
 				CNNRecomList: [], //CNN推荐结果
 				SimilarList: [], //基于物品推荐的歌曲
 				UserRecomList: [], //基于用户推荐的歌曲
-				current: 0,
-				show: [0, 1] //表示已经显示过的banner
+				// banner: [], //轮播图
+				// current: 0,
+				// show: [0, 1] //表示已经显示过的banner
 			};
 		},
 		created() {
@@ -90,9 +87,9 @@
 			});
 
 			Promise.all([
-				this.getBanner(),
+				this.getCNNRecom(),
 				this.getSimilar(),
-				this.gettoplist()
+				this.getUserRecom()
 			]).then(() => {
 				uni.hideLoading();
 			});
@@ -103,10 +100,10 @@
 			 * @method getBanner
 			 * @return {Promise}
 			 */
-			swiperChange(e) {
-				if (this.show.includes(e.detail.current)) return;
-				this.show = this.show.concat([e.detail.current]);
-			},
+			// swiperChange(e) {
+			// 	if (this.show.includes(e.detail.current)) return;
+			// 	this.show = this.show.concat([e.detail.current]);
+			// },
 
 			/**
 			 * 跳转到歌曲详情页
@@ -138,57 +135,63 @@
 			// 	});
 			// },
 			/**
-			 * 请求banner图
-			 * @method getBanner
+			 * 获取基于CNN的推荐
+			 * @method getCNNRecom
 			 * @return {Promise}
 			 */
-			getBanner() {
-				return getBanner().then(res => {
-					for (let item of res.banners) {
-						this.banner.push(item.imageUrl);
-					}
+			getCNNRecom() {
+				return getCNNRecom({
+					song_id: '1367114879' //歌曲：Lighter Than Air (Extended Mix)
+				}).then(res => {
+					console.log("CNN推荐结果：", res)
+					// for (let item of res.banners) {
+					// 	this.banner.push(item.imageUrl);
+					// }
 				});
 			},
 			/**
 			 * 获取基于物品的推荐
-			 * @method getBanner
+			 * @method getSimilar
 			 * @return {Promise}
 			 */
 			getSimilar() {
 				getSimilar({
-					id: '1362573686' //歌曲：Lighter Than Air (Mixed)
+					id: '1367114879' //歌曲：Lighter Than Air (Extended Mix)
 				}).then(res => {
-					// let random = Math.floor(
-					// 	Math.random() * (res.result.length - 5)
-					// );
 					console.log("物品推荐结果：", res)
 					// 推荐结果
-					for (let item of res) {
+					for (let key in res) {
+						if (key == 'code') continue
+						let item = res[key]
 						this.SimilarList.push({
 							song_id: item.song_id,
-							full_song_name: (item.artist_name + ' - ' + item.song_name),
+							full_song_name: (item.artist_name + ' - ' + item.album_name),
 							album_pic: item.album_picture,
 						});
 					}
 				});
 			},
 			/**
-			 * 获取榜单
+			 * 获取基于用户的推荐
 			 * @method getBanner
 			 * @return {Promise}
 			 */
-			gettoplist() {
-				toplist().then(res => {
-					let random = Math.floor(Math.random() * (res.list.length - 5));
-					// 随机取5个
-					for (let item of res.list.slice(random, random + 6)) {
-						this.toplist.push({
-							id: item.id,
-							name: item.name,
-							picUrl: item.coverImgUrl,
-							playCount: item.playCount
-						});
-					}
+			getUserRecom() {
+				getUserRecom({
+					user_id: 'b64cdd1a0bd907e5e00b39e345194768e330d652' // root用户id
+				}).then(res => {
+					console.log("用户推荐结果：", res)
+					// 推荐结果
+					// for (let key in res) {
+					// 	console.log("输出key：", key)
+					// 	if (key == 'code') continue
+					// 	let item = res[key]
+					// 	this.SimilarList.push({
+					// 		song_id: item.song_id,
+					// 		full_song_name: (item.artist_name + ' - ' + item.album_name),
+					// 		album_pic: item.album_picture,
+					// 	});
+					// }
 				});
 			}
 		}
@@ -225,5 +228,123 @@
 	van-icon {
 		position: relative;
 		top: 5px;
+	}
+
+	.coverBox {
+		position: relative;
+		background: url(//s3.music.126.net/mobile-new/img/hot_music_bg_2x.jpg?f01a252…=) no-repeat;
+		background-size: cover;
+		height: 146px;
+		display: flex;
+		justify-content: center;
+		flex-direction: column;
+		padding-left: 15px;
+
+		.cover {
+			background: url(//s3.music.126.net/mobile-new/img/index_icon_2x.png?5207a28…=) no-repeat;
+			background-size: 166px 97px;
+			width: 142px;
+			height: 67px;
+			background-position: -24px -30px;
+		}
+
+		.time {
+			color: hsla(0, 0%, 100%, 0.8);
+			font-size: 12px;
+			transform: scale(0.91);
+			transform-origin: left top;
+			margin-top: 10px;
+		}
+	}
+
+	.SongList {
+		.header {
+			display: flex;
+			border-radius: 13px 13px 0 0;
+			height: 45px;
+			line-height: 45px;
+			background-color: #fff;
+			align-items: center;
+			font-size: 30rpx;
+			border-bottom: 1px solid #eee;
+			overflow: hidden;
+
+			image {
+				width: 20px;
+				height: 20px;
+				margin-right: 15px;
+				margin-left: 15px;
+			}
+
+			.left {
+				margin-right: auto;
+				color: #333;
+
+				Text {
+					color: #999;
+				}
+			}
+
+			.right {
+				height: 100%;
+				padding: 0 8px;
+				background-color: red;
+				color: #fff;
+				text-align: center;
+				min-width: 110px;
+			}
+		}
+
+		.item {
+			display: flex;
+			align-items: center;
+			padding-left: 20px;
+			font-size: 30rpx;
+			color: #333;
+			height: 50px;
+
+			.left {
+				margin-right: 20px;
+				color: #888;
+			}
+
+			.box {
+				flex: 1;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				border-bottom: 1px solid #eee;
+				padding-right: 15px;
+				height: 100%;
+				overflow: hidden;
+
+				.middle {
+					display: flex;
+					flex-direction: column;
+					flex: 0 0 90%;
+					overflow: hidden;
+
+					text {
+						font-size: 24rpx;
+						color: #888;
+						margin-top: 1px;
+					}
+
+					.ellipsis {
+						overflow: hidden;
+						text-overflow: ellipsis;
+						white-space: nowrap;
+					}
+				}
+
+				.right {
+					image {
+						width: 25px;
+						height: 25px;
+						margin-top: 3px;
+					}
+				}
+			}
+		}
 	}
 </style>

@@ -1,8 +1,10 @@
 <template>
-	<View class='SongSheet item' @click="go(song_item)">
-		<Image lazyLoad :src="picUrl" />
+	<View class="box">
+		<View class='item' @click="go(song_item)">
+			<Image lazyLoad :src="picUrl" />
+			<Image class='playIcon' :src="require('../static/play-cell.png')" />
+		</View>
 		<Text class='name'>{{name}}</Text>
-		<Image class='playIcon' :src="require('../static/play-cell.png')" />
 	</View>
 </template>
 
@@ -62,7 +64,13 @@
 	$width : 100%;
 	$height: 31vw;
 
-	.SongSheet.item {
+	.box {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+	}
+
+	.item {
 		position: relative;
 		display: flex;
 		flex-direction: column;
@@ -70,25 +78,30 @@
 		overflow: hidden;
 		width: $width;
 		margin-top: 7Px;
+	}
 
-		image {
-			width: $width;
-			height: $height;
-			border-radius: 10rpx;
-		}
+	image {
+		width: $width;
+		height: $height;
+		border-radius: 10rpx;
+	}
 
-		.playIcon {
-			position: absolute;
-			right: 5%;
-			top: 102px;
-			width: 20px;
-			height: 20px;
-		}
+	.playIcon {
+		position: absolute;
+		right: 5%;
+		bottom: 5%;
+		width: 20px;
+		height: 20px;
+	}
 
-		.name {
-			font-size: 24rpx;
-			margin-bottom: 15Px;
-			margin-top: 5Px;
-		}
+	.name {
+		font-size: 24rpx;
+		margin-bottom: 15Px;
+		margin-top: 5Px;
+	}
+
+	.box:after {
+		content: "";
+		flex: auto;
 	}
 </style>

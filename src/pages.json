@@ -27,12 +27,15 @@
 		},
 		{
 			"path": "pages/Song/index"
-		}
-	],
+		},
+		{
+            "path" : "pages/User/index"
+        }
+    ],
 	"globalStyle": {
 		"navigationBarTextStyle": "white",
 		"navigationBarTitleText": "音乐推荐系统",
-		"navigationBarBackgroundColor": "#31c27c",
+		"navigationBarBackgroundColor": "#C62F2F",
 		"backgroundColor": "#F8F8F8"
 	}
 }

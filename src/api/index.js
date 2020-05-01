@@ -50,8 +50,10 @@ const getSimilar = (data = {}) => new Api('/page/get_similar_song.php', data)
 const getUserRecom = (data = {}) => new Api('/page/get_user_recommendation.php', data)
 //搜索
 const search = (data = {}) => new Api('/page/search_song_f_name.php', data);
-//歌曲详情
+//歌曲详情(自己写的)
 const getSongDetail = (data = {}) => new Api('/page/play_music.php', data);
+//歌曲详情(原接口，用于用户CF推荐)
+const getDetail = (data = {}) => new Api('/page/get_music_detail.php', data);
 //热歌榜,
 const getHot = (data = {}) => new Api('/page/get_new_music.php', data);
 
@@ -78,7 +80,9 @@ export {
 	getUserRecom,
 	search,
 	getSongDetail,
-
+	getDetail,
+	
+	// 原接口
 	getBanner,
 	getPersonalized,
 	getSongList,

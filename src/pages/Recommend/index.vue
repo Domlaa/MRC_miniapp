@@ -28,7 +28,7 @@
 						</Text>
 					</View>
 					<View class="right">
-						<van-tag mark type="primary">风格名</van-tag>
+						<van-tag plain type="danger">Trance</van-tag>
 					</View>
 				</View>
 			</View>
@@ -58,7 +58,8 @@
 	import {
 		getCNNRecom,
 		getSimilar,
-		getUserRecom
+		getUserRecom,
+		getDetail
 	} from "../../api/index";
 	import VanIcon from "../../wxcomponents/vant-weapp/icon/index";
 	import VanTag from "../../wxcomponents/vant-weapp/tag/index";
@@ -165,7 +166,7 @@
 						let item = res[key]
 						this.SimilarList.push({
 							song_id: item.song_id,
-							full_song_name: (item.artist_name + ' - ' + item.album_name),
+							full_song_name: (item.artist_name + ' - ' + item.song_name),
 							album_pic: item.album_picture,
 						});
 					}
@@ -178,20 +179,39 @@
 			 */
 			getUserRecom() {
 				getUserRecom({
-					user_id: 'b64cdd1a0bd907e5e00b39e345194768e330d652' // root用户id
+					user_id: '10f05ce002a69775a3bb51eb6a465e0f' // root用户id
 				}).then(res => {
-					console.log("用户推荐结果：", res)
-					// 推荐结果
-					// for (let key in res) {
-					// 	console.log("输出key：", key)
-					// 	if (key == 'code') continue
-					// 	let item = res[key]
-					// 	this.SimilarList.push({
-					// 		song_id: item.song_id,
-					// 		full_song_name: (item.artist_name + ' - ' + item.album_name),
-					// 		album_pic: item.album_picture,
-					// 	});
-					// }
+					console.log("用户推荐歌曲id结果：", res)
+					if (res['code'] == '200') {
+						// 推荐结果
+						let recommendations = res['recommendations']
+						for (let key in recommendations) {
+							let recommend_track_id = recommendations[key];
+							// 根据id查询歌曲详情
+							getDetail({
+								id: recommend_track_id
+							}).then(data => {
+								// 解析数据到响应式数组中
+								console.log('用户推荐歌曲详情：', data)
+								if (data.hasOwnProperty('0')) {
+									let temp = data[0]
+									this.UserRecomList.push({
+										song_id: temp.song_id,
+										full_song_name: (temp.artist_name + ' - ' + temp.song_name),
+										album_pic: temp.album_picture,
+									});
+								} else {
+									this.UserRecomList.push({
+										song_id: data.song_id,
+										full_song_name: (data.artist_name + ' - ' + data.song_name),
+										album_pic: data.album_picture,
+									})
+								}
+							})
+
+						}
+
+					}
 				});
 			}
 		}

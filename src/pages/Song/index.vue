@@ -23,14 +23,15 @@
 
 		<View class="footer">
 			<View class="Lyric">
-				<View class="content" :style="style" v-if="audio && audio_LyricList">
+				<View>歌词部分</View>
+				<!-- <View class="content" :style="style" v-if="audio && audio_LyricList">
 					<View v-for="(item, index) in audio_LyricList" :class="
                             index === LyricIndex
                                 ? 'active Lyric_item'
                                 : 'Lyric_item'
                         "
 					 :key="index">{{ item.Text }}</View>
-				</View>
+				</View> -->
 			</View>
 
 			<View class="range-box">

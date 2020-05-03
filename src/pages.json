@@ -12,27 +12,37 @@
 			}
 		},
 		{
-			"path": "pages/PersonalizedList/index",
-			"style": {
-				"usingComponents": {
-					"van-icon": "/wxcomponents/vant-weapp/icon/index"
-				}
-			}
-		},
-		{
-			"path": "pages/SongList/index",
-			"style": {
-				"navigationBarTitleText": "歌单"
-			}
-		},
-		{
 			"path": "pages/Song/index"
+		},
+		{
+			"path": "pages/History/index",
+			"style": {
+				"navigationBarTitleText": "听歌记录"
+			}
+		},
+		{
+			"path": "pages/MyRating/index",
+			"style": {
+				"navigationBarTitleText": "我的评分"
+			}
+		},
+		{
+			"path": "pages/ForMe/index",
+			"style": {
+				"navigationBarTitleText": "音乐口味"
+			}
+		},
+		{
+			"path": "pages/About/index",
+			"style": {
+				"navigationBarTitleText": "关于"
+			}
 		}
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "white",
 		"navigationBarTitleText": "音乐推荐系统",
-		"navigationBarBackgroundColor": "#31c27c",
+		"navigationBarBackgroundColor": "#C62F2F",
 		"backgroundColor": "#F8F8F8"
 	}
 }

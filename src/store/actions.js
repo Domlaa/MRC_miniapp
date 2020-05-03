@@ -1,42 +1,14 @@
 import {
-	UPDATELYRIC,
 	UPDATE,
 	SETGLOBALDATA,
 	PREVSONG,
 	NEXTSONG
 } from './constants.js'
 import {
-	getSongDetail,
-	getLyric
+	getSongDetail
 } from '../api/index'
 
 const actions = {
-	updateLyric({
-		commit
-	}, payload) {
-		let {
-			id
-		} = payload
-		getLyric({
-			id: id
-		}).then(res => {
-			let LyricList =
-				res.lrc &&
-				res.lrc.lyric.split('\n').map(item => {
-					let arr = item.split(']')
-					let time = arr[0].substr(1)
-
-					return {
-						time: (time.split(':')[0] * 60 + time.split(':')[1] * 1) | 0,
-						Text: arr[1]
-					}
-				})
-			commit(UPDATELYRIC, {
-				LyricList: LyricList.filter(item => item.Text), //过滤掉空歌词
-				callback: payload.callback
-			})
-		})
-	},
 	update({
 		commit
 	}, payload) {

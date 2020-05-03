@@ -1,0 +1,130 @@
+<template>
+	<view>
+		<view class="person-head">
+			<cmd-avatar src="https://avatar.bbs.miui.com/images/noavatar_small.gif" @click="fnInfoWin" size="lg" :make="{'background-color': '#fff'}"></cmd-avatar>
+			<view class="person-head-box">
+				<view class="person-head-nickname">Jason</view>
+				<view class="person-head-username">ID：1600300626wangjiecheng</view>
+			</view>
+		</view>
+		<view class="person-list">
+			<cmd-cell-item @click="gotoItem(1)" title="听歌记录" slot-left arrow>
+				<cmd-icon type="bullet-list" size="24" color="#C62F2F"></cmd-icon>
+			</cmd-cell-item>
+			<cmd-cell-item @click="gotoItem(2)" title="我的评分" slot-left arrow>
+				<cmd-icon type="star" size="24" color="#C62F2F"></cmd-icon>
+			</cmd-cell-item>
+			<cmd-cell-item @click="gotoItem(3)" title="音乐口味" slot-left arrow>
+				<cmd-icon type="streaming" size="24" color="#C62F2F"></cmd-icon>
+			</cmd-cell-item>
+			<cmd-cell-item @click="gotoItem(0)" title="关于" addon="v1.0" slot-left arrow>
+				<cmd-icon type="alert-circle" size="24" color="#C62F2F"></cmd-icon>
+			</cmd-cell-item>
+			<button class="btn-logout">退出登录</button>
+		</view>
+	</view>
+</template>
+
+<script>
+	import cmdAvatar from "@/components/cmd-avatar/cmd-avatar.vue"
+	import cmdIcon from "@/components/cmd-icon/cmd-icon.vue"
+	import cmdCellItem from "@/components/cmd-cell-item/cmd-cell-item.vue"
+
+	export default {
+		components: {
+			cmdAvatar,
+			cmdCellItem,
+			cmdIcon
+		},
+		data() {
+			return {};
+		},
+		methods: {
+			/**
+			 * 打开用户信息页
+			 */
+			fnInfoWin() {
+				uni.navigateTo({
+					url: '/pages/user/info/info'
+				})
+			},
+			// 跳转到对应子页面
+			gotoItem(item) {
+				console.log("跳转到：", item)
+				switch (item) {
+					case 1:
+						uni.navigateTo({
+							url: '/pages/History/index'
+						})
+						break;
+
+					case 2:
+						uni.navigateTo({
+							url: '/pages/MyRating/index'
+						})
+						break;
+
+					case 3:
+						uni.navigateTo({
+							url: '/pages/ForMe/index'
+						})
+						break;
+
+					case 0:
+						uni.navigateTo({
+							url: '/pages/About/index'
+						})
+						break;
+
+					default:
+						console.log('跳转类型未知！')
+						break;
+				}
+			}
+		}
+	}
+</script>
+
+<style>
+	.person-head {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		height: 150px;
+		padding-left: 20px;
+		background: linear-gradient(to right, #C62F2F, #ee0a24);
+	}
+
+	.person-head-box {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: flex-start;
+		margin-left: 10px;
+	}
+
+	.person-head-nickname {
+		font-size: 18px;
+		font-weight: 500;
+		color: #fff;
+	}
+
+	.person-head-username {
+		font-size: 14px;
+		font-weight: 500;
+		color: #fff;
+	}
+
+	.person-list {
+		line-height: 0;
+	}
+
+	.btn-logout {
+		margin-top: 100upx;
+		width: 80%;
+		border-radius: 50upx;
+		font-size: 16px;
+		color: #fff;
+		background: linear-gradient(to right, #C62F2F, #ee0a24);
+	}
+</style>

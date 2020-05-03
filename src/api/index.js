@@ -3,12 +3,13 @@ import config from '../config/index';
 function Api(path, data = {}) {
 	return new Promise((resolve, reject) => {
 		uni.request({
-			method: "POST",
 			url: config.serverUrl + path,
 			data: data,
 			header: {
-				'content-type': 'application/json'
+				// 'content-type': 'application/json'
+				'content-type': 'application/x-www-form-urlencoded'
 			},
+			method: 'POST',
 			success: res => {
 				if (res.statusCode >= 200 && res.statusCode <= 300) {
 					resolve(res.data);
@@ -49,8 +50,14 @@ const getSimilar = (data = {}) => new Api('/page/get_similar_song.php', data)
 const getUserRecom = (data = {}) => new Api('/page/get_user_recommendation.php', data)
 //搜索
 const search = (data = {}) => new Api('/page/search_song_f_name.php', data);
-//歌曲详情
+//歌曲详情(自己写的)
 const getSongDetail = (data = {}) => new Api('/page/play_music.php', data);
+//歌曲详情(原接口，用于用户CF推荐)
+const getDetail = (data = {}) => new Api('/page/get_music_detail.php', data);
+//热歌榜
+const getHot = (data = {}) => new Api('/page/get_new_music.php', data);
+// 用户评分记录
+const getRating = (data = {}) => Api('page/get_user_rating_all.php', data);
 
 //首页轮播图
 const getBanner = (data = {}) => new Api('/banner', data);
@@ -67,7 +74,7 @@ const searchHot = (data = {}) => new Api('/search/hot', data);
 //所有榜单--这个用歌单详情获取数据
 const toplist = (data = {}) => new Api('/toplist', data);
 //获取榜单---1热歌榜,
-const getHot = (data = {}) => new Api('/top/list', data);
+// const getHot = (data = {}) => new Api('/top/list', data);
 
 export {
 	getCNNRecom,
@@ -75,7 +82,9 @@ export {
 	getUserRecom,
 	search,
 	getSongDetail,
+	getDetail,
 
+	// 原接口
 	getBanner,
 	getPersonalized,
 	getSongList,

@@ -4,7 +4,7 @@
 		<View class="Hot SongList">
 			<View class="coverBox">
 				<View class="cover" :style="{backgroundImage:'url(' + baseTrackInfo.base_pic + ')'}"></View>
-				<Text class="time">以下推荐结果基于歌曲 {{ baseTrackInfo.base_name }} 推荐</Text>
+				<Text class="time">以下推荐结果基于歌曲 {{ baseTrackInfo.base_name }} 推荐✨</Text>
 			</View>
 			<View class="cell-title">
 				基于深度学习的推荐
@@ -30,7 +30,7 @@
 
 		<!-- 基于物品的协同过滤推荐展示区 -->
 		<View class="cell-title">
-			基于物品的协同过滤推荐
+			基于项目的协同过滤推荐
 			<van-icon name="arrow" size="20px" color="#999" />
 		</View>
 		<View class="cell-SongSheet">
@@ -69,7 +69,6 @@
 		},
 		data() {
 			return {
-				base_track_id: '1367114879', //根据推荐的歌曲的id（首次）
 				baseTrackInfo: {}, //根据推荐歌曲的基本信息
 				CNNRecomList: [], //CNN推荐结果
 				SimilarList: [], //基于物品推荐的歌曲
@@ -81,7 +80,7 @@
 		},
 		created() {
 			getDetail({
-				id: this.base_track_id
+				id: getApp().globalData.base_track_id //获取全局变量
 			}).then(res => {
 				console.log("基本歌曲的详情信息：", res)
 				this.baseTrackInfo.base_name = res.song_name
@@ -128,6 +127,7 @@
 
 			// 重新请求CNN推荐
 			retry() {
+				console.log("重新请求CNN推荐......")
 				this.tips = "尝试重新分析中......"
 				this.btShow = false
 				this.getCNNRecom()
@@ -140,7 +140,7 @@
 			 */
 			getCNNRecom() {
 				return getCNNRecom({
-					song_id: this.base_track_id
+					song_id: getApp().globalData.base_track_id //获取全局变量
 				}).then(res => {
 					console.log("CNN推荐结果：", res)
 					this.isLoading = true
@@ -151,10 +151,52 @@
 						this.isLoading = false
 						let recom_song = res['recommendations']
 						for (let i = 0, len = recom_song.length; i < len; i++) {
+							let recom_genre = 'unknow'
+							switch (recom_song[i][0]["parent_genre"]) {
+								case 'Breakbeat':
+									recom_genre = "碎拍"
+									break;
+
+								case 'Dancehall/Ragga':
+									recom_genre = "雷鬼"
+									break;
+
+								case 'Downtempo':
+									recom_genre = "缓拍"
+									break;
+
+								case 'Drum And Bass':
+									recom_genre = "鼓打贝斯"
+									break;
+
+								case 'Funky House':
+									recom_genre = "放克/电子"
+									break;
+
+								case 'Hip Hop/R&B':
+									recom_genre = "嘻哈说唱"
+									break;
+
+								case 'Minimal House':
+									recom_genre = "极简电子"
+									break;
+
+								case 'Rock/Indie':
+									recom_genre = "独立摇滚"
+									break;
+
+								case 'Trance':
+									recom_genre = "迷幻舞曲"
+									break;
+
+								default:
+									recom_genre = "其他类型"
+									break;
+							}
 							this.CNNRecomList.push({
 								ar: recom_song[i][0]["release_artist"],
 								name: recom_song[i][0]["track_name"].split('-')[0],
-								genre: recom_song[i][0]["release_genre"]
+								genre: recom_genre
 							})
 						}
 					}
@@ -169,7 +211,7 @@
 			 */
 			getSimilar() {
 				getSimilar({
-					id: this.base_track_id
+					id: getApp().globalData.base_track_id //获取全局变量
 				}).then(res => {
 					console.log("物品推荐结果：", res)
 					// 推荐结果
@@ -191,7 +233,7 @@
 			 */
 			getUserRecom() {
 				getUserRecom({
-					user_id: 'b64cdd1a0bd907e5e00b39e345194768e330d652' // root用户id
+					user_id: getApp().globalData.user_id // 全局用户id
 				}).then(res => {
 					console.log("用户推荐歌曲id结果：", res)
 					if (res['code'] == '200') {

@@ -15,6 +15,18 @@
 			"path": "pages/Song/index"
 		},
 		{
+			"path": "pages/Login/index",
+			"style": {
+				"navigationBarTitleText": "登录"
+			}
+		},
+		{
+			"path": "pages/Register/index",
+			"style": {
+				"navigationBarTitleText": "注册"
+			}
+		},
+		{
 			"path": "pages/History/index",
 			"style": {
 				"navigationBarTitleText": "听歌记录"

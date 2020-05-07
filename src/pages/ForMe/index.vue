@@ -1,12 +1,12 @@
 <template>
-	<View>音乐口味</View>
+	<View>{{ text }}</View>
 </template>
 
 <script>
 	export default {
 		data() {
 			return {
-
+				text: "音乐口味"
 			}
 		}
 	}

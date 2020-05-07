@@ -86,7 +86,7 @@
 		},
 		created() {
 			getHot({
-				limit: 10 //加载热门歌曲数
+				limit: 20 //加载热门歌曲数
 			}).then(res => {
 				console.log("热榜res：", res)
 				if (res['code'] == '200') {
@@ -255,7 +255,7 @@
 
 <style lang='scss' scoped>
 	.Search .btn {
-		background-color: #6180e9;
+		background-color: #C62F2F;
 		color: #fff;
 		border-radius: 6px;
 		padding: 0 10px;

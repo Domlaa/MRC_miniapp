@@ -56,9 +56,20 @@ const getSongDetail = (data = {}) => new Api('/page/play_music.php', data);
 const getDetail = (data = {}) => new Api('/page/get_music_detail.php', data);
 //热歌榜
 const getHot = (data = {}) => new Api('/page/get_new_music.php', data);
-// 用户评分记录
-const getRating = (data = {}) => Api('page/get_user_rating_all.php', data);
+//获取用户信息
+const getUserInfo = (data = {}) => new Api('/page/_get_userinfor.php', data);
+//用户评分记录
+const getRating = (data = {}) => Api('/page/get_user_rating_all.php', data);
+//注册
+const register = (data = {}) => Api('/page/register.php', data);
+//登录
+const login = (data = {}) => Api('/page/login.php', data);
+//退出登录
+const logout = (data = {}) => Api('/page/logout.php', data);
+//输入时用户冲突检测
+const checkUser = (data = {}) => Api('/page/check_user_name.php', data);
 
+//原接口列表
 //首页轮播图
 const getBanner = (data = {}) => new Api('/banner', data);
 //推荐歌单
@@ -81,16 +92,13 @@ export {
 	getSimilar,
 	getUserRecom,
 	search,
+	getHot,
 	getSongDetail,
 	getDetail,
-
-	// 原接口
-	getBanner,
-	getPersonalized,
-	getSongList,
-	getSong,
-	getLyric,
-	searchHot,
-	toplist,
-	getHot
+	getUserInfo,
+	getRating,
+	register,
+	login,
+	logout,
+	checkUser
 };

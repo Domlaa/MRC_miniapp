@@ -118,15 +118,6 @@ song_id|歌曲id
 
 * 返回值：单首歌曲的信息
 
-### 获取用户信息
-* 接口地址：page/_get_userinfor.php
-* 功能位置：
-* 触发行为：点击播放歌曲时请求 (其他待定)
-* 相关文件：user_information.js
-* 请求类型：POST
-* 参数说明：无参数
-* 返回值：username 和 userid
-
 ### 获取某用户评分的所有歌曲
 * 接口地址：get_user_rating_all.php
 * 功能位置：
@@ -229,6 +220,15 @@ passwd|对应的密码
 
 * 返回值：(⊙﹏⊙)  弹窗显示注册成功,请登录
 
+### 获取用户信息
+* 接口地址：page/_get_userinfor.php
+* 功能位置：
+* 触发行为：点击播放歌曲时请求 (其他待定)
+* 相关文件：user_information.js
+* 请求类型：POST
+* 参数说明：无参数
+* 返回值：username 和 userid
+
 ### 用户登录
 * 接口地址：page/login.php
 * 功能位置：注册登录页面的登录按钮
@@ -241,8 +241,8 @@ passwd|对应的密码
 --|--
 to|reg (不明)
 did|0 (不明)
-user|注册的用户名
-passwd|对应的密码
+username|注册的用户名
+password|对应的密码
 submit|登 录 (不明)
 
 * 返回值：(⊙﹏⊙)  弹窗显示注册成功,请登录

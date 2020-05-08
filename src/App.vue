@@ -2,10 +2,12 @@
 	export default {
 		// 应用全局变量
 		globalData: {
-			base_track_id: '27888500', //根据推荐的歌曲的id（首次）
-			login_status: 0, //登录状态，0为未登录，1为已登录
-			user_id: '' //当前登录的用户的id
-			// user_id: 'b64cdd1a0bd907e5e00b39e345194768e330d652' //当前登录的用户的id
+			BASE_TRACK_ID: '27888500', //根据推荐的歌曲的id（首次）
+			LOGIN_STATUS: false, //登录状态，false为未登录，true为已登录
+			USER_INFO: {
+				USER_NAME: '', //当前登录的用户名
+				USER_ID: '' //当前登录的用户的id
+			}
 		},
 		onLaunch: function() {
 			let audio = uni.getBackgroundAudioManager();

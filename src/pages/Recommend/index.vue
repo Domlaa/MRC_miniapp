@@ -42,8 +42,12 @@
 			基于用户的协同过滤推荐
 			<van-icon name="arrow" size="20px" color="#999" />
 		</View>
-		<View class="cell-SongSheet">
+		<View v-if='isLogin' class="cell-SongSheet">
 			<SongSheet v-for="(item, index) in UserRecomList" :key="index" :song_item="item" :name="item.full_song_name" :picUrl="item.album_pic + '?imageView&thumbnail=250x0'" />
+		</View>
+		<View v-else class="prompt-box">
+			<Text class="prompt-text">你还没有登录，请先登录。</Text>
+			<button class="prompt-button" type="warn" size="mini" @click="gotoLogin">点我去登录</button>
 		</View>
 	</View>
 </template>
@@ -67,6 +71,9 @@
 			VanTag,
 			VanLoading
 		},
+		props: {
+			isLogin: Boolean
+		},
 		data() {
 			return {
 				baseTrackInfo: {}, //根据推荐歌曲的基本信息
@@ -75,12 +82,12 @@
 				UserRecomList: [], //基于用户推荐的歌曲
 				isLoading: true, //加载状态
 				tips: "歌曲分析推荐中......",
-				btShow: false
+				btShow: false,
 			};
 		},
 		created() {
 			getDetail({
-				id: getApp().globalData.base_track_id //获取全局变量
+				id: getApp().globalData.BASE_TRACK_ID //获取全局变量
 			}).then(res => {
 				console.log("基本歌曲的详情信息：", res)
 				this.baseTrackInfo.base_name = res.song_name
@@ -125,12 +132,23 @@
 				});
 			},
 
-			// 重新请求CNN推荐
+			/**
+			 * 重新请求CNN推荐
+			 */
 			retry() {
 				console.log("重新请求CNN推荐......")
 				this.tips = "尝试重新分析中......"
 				this.btShow = false
 				this.getCNNRecom()
+			},
+
+			/**
+			 * 未登录时点击跳转到登录页面
+			 */
+			gotoLogin() {
+				uni.navigateTo({
+					url: '../Login/index'
+				})
 			},
 
 			/**
@@ -140,7 +158,7 @@
 			 */
 			getCNNRecom() {
 				return getCNNRecom({
-					song_id: getApp().globalData.base_track_id //获取全局变量
+					song_id: getApp().globalData.BASE_TRACK_ID //获取全局变量
 				}).then(res => {
 					console.log("CNN推荐结果：", res)
 					this.isLoading = true
@@ -204,6 +222,7 @@
 					console.log('CNN请求错误：', e)
 				});
 			},
+
 			/**
 			 * 获取基于物品的推荐
 			 * @method getSimilar
@@ -211,7 +230,7 @@
 			 */
 			getSimilar() {
 				getSimilar({
-					id: getApp().globalData.base_track_id //获取全局变量
+					id: getApp().globalData.BASE_TRACK_ID //获取全局变量
 				}).then(res => {
 					console.log("物品推荐结果：", res)
 					// 推荐结果
@@ -226,6 +245,7 @@
 					}
 				});
 			},
+
 			/**
 			 * 获取基于用户的推荐
 			 * @method getBanner
@@ -233,12 +253,13 @@
 			 */
 			getUserRecom() {
 				getUserRecom({
-					user_id: getApp().globalData.user_id // 全局用户id
+					user_id: getApp().globalData.USER_INFO.USER_ID // 全局用户id
 				}).then(res => {
 					console.log("用户推荐歌曲id结果：", res)
 					if (res['code'] == '200') {
 						// 推荐结果
 						let recommendations = res['recommendations']
+						
 						for (let key in recommendations) {
 							let recommend_track_id = recommendations[key];
 							// 根据id查询歌曲详情
@@ -408,15 +429,24 @@
 						white-space: nowrap;
 					}
 				}
-
-				/* .right {
-					image {
-						width: 25px;
-						height: 25px;
-						margin-top: 3px;
-					}
-				} */
 			}
 		}
+	}
+
+	.prompt-box {
+		display: flex;
+		margin: 24rpx;
+		align-items: center;
+	}
+
+	.prompt-text {
+		flex: 3;
+		margin: 24rpx 24rpx;
+		font-size: 24rpx;
+	}
+
+	.prompt-button {
+		flex: 1;
+		margin: 24rpx 24rpx;
 	}
 </style>

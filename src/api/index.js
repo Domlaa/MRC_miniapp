@@ -52,22 +52,22 @@ const getUserRecom = (data = {}) => new Api('/page/get_user_recommendation.php',
 const search = (data = {}) => new Api('/page/search_song_f_name.php', data);
 //歌曲详情(自己写的)
 const getSongDetail = (data = {}) => new Api('/page/play_music.php', data);
-//歌曲详情(原接口，用于用户CF推荐)
+//歌曲详情(未使用的原接口，用于用户CF推荐)
 const getDetail = (data = {}) => new Api('/page/get_music_detail.php', data);
 //热歌榜
 const getHot = (data = {}) => new Api('/page/get_new_music.php', data);
 //获取用户信息
 const getUserInfo = (data = {}) => new Api('/page/_get_userinfor.php', data);
 //用户评分记录
-const getRating = (data = {}) => Api('/page/get_user_rating_all.php', data);
+const getRating = (data = {}) => new Api('/page/get_user_rating_all.php', data);
 //注册
-const register = (data = {}) => Api('/page/register.php', data);
+const register = (data = {}) => new Api('/page/register.php', data);
 //登录
-const login = (data = {}) => Api('/page/login.php', data);
+const login = (data = {}) => new Api('/page/login.php', data);
 //退出登录
-const logout = (data = {}) => Api('/page/logout.php', data);
+const logout = (data = {}) => new Api('/page/logout.php?action=logout', data);
 //输入时用户冲突检测
-const checkUser = (data = {}) => Api('/page/check_user_name.php', data);
+const checkUser = (data = {}) => new Api('/page/check_user_name.php', data);
 
 //原接口列表
 //首页轮播图

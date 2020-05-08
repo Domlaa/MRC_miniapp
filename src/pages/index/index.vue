@@ -2,13 +2,13 @@
 	<view class="content">
 		<van-tabs :active="current" color="#ee0a24">
 			<van-tab title="推荐">
-				<Recommend />
+				<Recommend ref="refresh" :isLogin="isLogin" />
 			</van-tab>
 			<van-tab title="搜索">
 				<Search />
 			</van-tab>
 			<van-tab title="我的">
-				<User />
+				<User :isLogin="isLogin" :userInfo="userinfo" />
 			</van-tab>
 		</van-tabs>
 		<SongFooter ref="SongFooter" />
@@ -31,9 +31,24 @@
 		data() {
 			return {
 				current: 0,
+				isLogin: false,
+				userinfo: {
+					username: '',
+					userid: ''
+				}
 			};
 		},
 		onShow() {
+			console.log('触发了onShow()方法。')
+			this.isLogin = getApp().globalData.LOGIN_STATUS
+			this.userinfo.username = getApp().globalData.USER_INFO.USER_NAME
+			this.userinfo.userid = getApp().globalData.USER_INFO.USER_ID
+
+			// 登录后重新获取用户推荐
+			if (this.isLogin == true) {
+				this.$refs.refresh.getUserRecom()
+			}
+
 			this.$store.state.audio.onCanplay(() => {
 				//更新底部播放的状态
 				this.$refs.SongFooter.update();

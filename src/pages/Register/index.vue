@@ -116,13 +116,13 @@
 							uni.navigateBack({
 								animationType: 'pop-out'
 							})
-						}, 2500) //延迟时间
+						}, 2000) //延迟时间
 					} else {
 						uni.showToast({
 							icon: 'none',
 							title: res.msg,
 							mask: true,
-							duration: 2500
+							duration: 2000
 						})
 					}
 				})
